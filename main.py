@@ -617,10 +617,10 @@ async def update_order(order_id: int, order_data: OrderSchema, db: Session = Dep
     return item
 
     for item_key, item_value in item_data.dict().items():
-        setattr(item, order_key, order_value)
+        setattr(item, item_key, item_value)
         db.commit()
-        db.refresh(order)
-        return order
+        db.refresh(item)
+        return item
 
 
 @glovo_app.delete('/order/delete', tags=['Order'])
