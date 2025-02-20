@@ -391,7 +391,6 @@ async def delete_cart(cart_id: int, db: Session = Depends(get_db)):
     return {'message': 'This Cart is deleted'}
 
 
-
 @glovo_app.post('store_review/create', response_model=StoreReviewSchema, tags=['StoreReview'])
 async def create_review(review: StoreReviewSchema, db: Session = Depends(get_db)):
     db_review = StoreReview(**review.dict())
@@ -436,7 +435,6 @@ async def delete_review(review_id: int, db: Session = Depends(get_db)):
     db.delete(review)
     db.commit()
     return {'message': 'This StoreReview is deleted'}
-
 
 
 @glovo_app.post('courier/create', response_model=CourierSchema, tags=['Courier'])
@@ -533,6 +531,64 @@ async def delete_courier_review(courier_review_id: int, db: Session = Depends(ge
 
 @glovo_app.post('/order/create', response_model=OrderSchema, tags=['Order'])
 async def create_product(order: OrderSchema, db: Session = Depends(get_db)):
+    db_order = Order(**order.dict())
+    db.add(db_order)
+    db.commit()
+    db.refresh(db_order)
+    return db_order
+
+
+@glovo_app.get('/order/', response_model=OrderSchema, tags=['Order'])
+async def list_order(db: Session = Depends(get_db)):
+    return db.query(Order).all()
+
+
+@glovo_app.get('/order/{order_id}/',response_model=OrderSchema, tags=['Order'])
+async def detail_order(order_id: int, db: Session = Depends(get_db)):
+    order = db.query(Order).filter(Order.id == order_id).first()
+    if order is None:
+        raise HTTPException(status_code=404, detail='Order Not Found')
+    return order
+
+
+@glovo_app.put('/order/update', response_model=OrderSchema, tags=['Order'])
+async def update_order(order_id: int, order_data: OrderSchema, db: Session = Depends(get_db)):
+    order = db.query(Order).filter(Order.id == order_id).first()
+    if order is None:
+        raise HTTPException(status_code=404, detail='Order Not Found')
+    return order
+
+    for order_key, order_value in order_data.dict().items():
+        setattr(order, order_key, order_value)
+        db.commit()
+        db.refresh(order)
+        return order
+
+
+@glovo_app.delete('/order/delete', tags=['Order'])
+async def delete_order(order_id: int, db: Session = Depends(get_db)):
+    order = db.query(Order).filter(Order.id == order_id).first()
+    if order is None:
+        raise HTTPException(status_code=404, detail='Order Not Found')
+    db.delete(order)
+    db.commit()
+    return {'message': 'This Order is deleted'}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@glovo_app.post('/item/create', response_model=CartItemSchema, tags=['CartItem'])
+async def create_item(item: CartItemSchema, db: Session = Depends(get_db)):
     db_order = Order(**order.dict())
     db.add(db_order)
     db.commit()
