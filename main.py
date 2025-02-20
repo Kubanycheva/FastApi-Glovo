@@ -589,11 +589,11 @@ async def delete_order(order_id: int, db: Session = Depends(get_db)):
 
 @glovo_app.post('/item/create', response_model=CartItemSchema, tags=['CartItem'])
 async def create_item(item: CartItemSchema, db: Session = Depends(get_db)):
-    db_order = Order(**order.dict())
-    db.add(db_order)
+    db_item = Cart(**item.dict())
+    db.add(db_item)
     db.commit()
-    db.refresh(db_order)
-    return db_order
+    db.refresh(db_item)
+    return db_item
 
 
 @glovo_app.get('/order/', response_model=OrderSchema, tags=['Order'])
