@@ -603,8 +603,8 @@ async def list_item(db: Session = Depends(get_db)):
 
 @glovo_app.get('/item/{item_id}/',response_model=CartItemSchema, tags=['CartItem'])
 async def detail_item(item_id: int, db: Session = Depends(get_db)):
-    item = db.query(Order).filter(Order.id == order_id).first()
-    if order is None:
+    item = db.query(CartItem).filter(CartItem.id == item_id).first()
+    if item is None:
         raise HTTPException(status_code=404, detail='Order Not Found')
     return order
 
