@@ -626,9 +626,9 @@ async def update_order(order_id: int, order_data: OrderSchema, db: Session = Dep
 @glovo_app.delete('/item/delete', tags=['CartItem'])
 async def delete_item(item_id: int, db: Session = Depends(get_db)):
     item = db.query(CartItem).filter(CartItem.id == item_id).first()
-    if order is None:
-        raise HTTPException(status_code=404, detail='Order Not Found')
-    db.delete(order)
+    if item is None:
+        raise HTTPException(status_code=404, detail='CartItem Not Found')
+    db.delete(item)
     db.commit()
     return {'message': 'This Order is deleted'}
 
