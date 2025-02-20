@@ -596,9 +596,9 @@ async def create_item(item: CartItemSchema, db: Session = Depends(get_db)):
     return db_item
 
 
-@glovo_app.get('/order/', response_model=OrderSchema, tags=['Order'])
-async def list_order(db: Session = Depends(get_db)):
-    return db.query(Order).all()
+@glovo_app.get('/item/', response_model=CartItemSchema, tags=['CartItem'])
+async def list_item(db: Session = Depends(get_db)):
+    return db.query(CartItem).all()
 
 
 @glovo_app.get('/order/{order_id}/',response_model=OrderSchema, tags=['Order'])
