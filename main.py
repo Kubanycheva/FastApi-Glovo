@@ -611,9 +611,9 @@ async def detail_item(item_id: int, db: Session = Depends(get_db)):
 
 @glovo_app.put('/item/update', response_model=CartItemSchema, tags=['CartItem'])
 async def update_order(order_id: int, order_data: OrderSchema, db: Session = Depends(get_db)):
-    order = db.query(Order).filter(Order.id == order_id).first()
-    if order is None:
-        raise HTTPException(status_code=404, detail='Order Not Found')
+    item = db.query(CartItem).filter(CartItem.id == item_id).first()
+    if item is None:
+        raise HTTPException(status_code=404, detail='CartItem Not Found')
     return order
 
     for order_key, order_value in order_data.dict().items():
