@@ -118,7 +118,7 @@ def refresh(refresh_token: str, db: Session = Depends(get_db)):
     return {'access_token': access_token, 'token_type': 'bearer'}
 
 
-@glovo_app.post('/category/create/', response_model=CategorySchema, tags=['Категории'])
+@glovo_app.post('/category/create/', response_model=CategorySchema, tags=['Category'])
 async def create_category(category: CategorySchema, db: Session = Depends(get_db)):
     db_category = Category(category_name=category.category_name)
     db.add(db_category)
@@ -127,12 +127,12 @@ async def create_category(category: CategorySchema, db: Session = Depends(get_db
     return db_category
 
 
-@glovo_app.get('/category/', response_model=List[CategorySchema], tags=['Категории'])
+@glovo_app.get('/category/', response_model=List[CategorySchema], tags=['Category'])
 async def list_category(db: Session = Depends(get_db)):
     return db.query(Category).all()
 
 
-@glovo_app.get('/category/{category_id}/', response_model=CategorySchema, tags=['Категории'])
+@glovo_app.get('/category/{category_id}/', response_model=CategorySchema, tags=['Category'])
 async def detail_category(category_id: int, db: Session = Depends(get_db)):
     category = db.query(Category).filter(Category.id == category_id).first()
     if category is None:
@@ -140,7 +140,7 @@ async def detail_category(category_id: int, db: Session = Depends(get_db)):
     return category
 
 
-@glovo_app.put('/category/{category_id/', response_model=CategorySchema, tags=['Категории'])
+@glovo_app.put('/category/{category_id/', response_model=CategorySchema, tags=['Category'])
 async def update_category(category_id: int, category_data: CategorySchema,
                           db: Session = Depends(get_db)):
     category = db.query(Category).filter(Category.id == category_id).first()
@@ -152,7 +152,7 @@ async def update_category(category_id: int, category_data: CategorySchema,
     return category
 
 
-@glovo_app.delete('/category/{category_id}', response_model=CategorySchema, tags=['Категории'])
+@glovo_app.delete('/category/{category_id}', response_model=CategorySchema, tags=['Category'])
 async def delete_category(category_id: int, db: Session = Depends(get_db)):
     category = db.query(Category).filter(Category.id == category_id).first()
     if category is None:
@@ -162,7 +162,7 @@ async def delete_category(category_id: int, db: Session = Depends(get_db)):
     return {'message': 'Category deleted successfully'}
 
 
-@glovo_app.post('/store/create/', response_model=StoreSchema, tags=['Магазин'])
+@glovo_app.post('/store/create/', response_model=StoreSchema, tags=['Store'])
 async def create_store(store: StoreSchema, db: Session = Depends(get_db)):
     db_store = Store(**store.dict())
     db.add(db_store)
@@ -171,12 +171,12 @@ async def create_store(store: StoreSchema, db: Session = Depends(get_db)):
     return db_store
 
 
-@glovo_app.get('/store/', response_model=List[StoreSchema], tags=['Магазин'])
+@glovo_app.get('/store/', response_model=List[StoreSchema], tags=['Store'])
 async def list_store(db: Session = Depends(get_db)):
     return db.query(Store).all()
 
 
-@glovo_app.get('/store/{store_id}/', response_model=StoreSchema, tags=['Магазин'])
+@glovo_app.get('/store/{store_id}/', response_model=StoreSchema, tags=['Store'])
 async def detail_store(store_id: int, db: Session = Depends(get_db)):
     store = db.query(Store).filter(Store.id == store_id).first()
     if store is None:
@@ -184,7 +184,7 @@ async def detail_store(store_id: int, db: Session = Depends(get_db)):
     return store
 
 
-@glovo_app.put('/store/{store_id}/', response_model=StoreSchema, tags=['Магазин'])
+@glovo_app.put('/store/{store_id}/', response_model=StoreSchema, tags=['Store'])
 async def update_store(store_id: int, store_data: StoreSchema,  db: Session = Depends(get_db)):
     store = db.query(Store).filter(Store.id == store_id).first()
     if store is None:
@@ -197,7 +197,7 @@ async def update_store(store_id: int, store_data: StoreSchema,  db: Session = De
     return store
 
 
-@glovo_app.delete('/store{store_id}/', tags=['Магазин'])
+@glovo_app.delete('/store{store_id}/', tags=['Store'])
 async def delete_store(store_id: int, db: Session = Depends(get_db)):
     store = db.query(Store).filter(Store.id == store_id).first()
     if store is None:
@@ -299,7 +299,7 @@ async def delete_product(product_id: int, db: Session = Depends(get_db)):
     return {'message': 'This Product is deleted'}
 
 
-@glovo_app.post('/product_combo/create', response_model=ProductCombo, tags=['ProductCombo'])
+@glovo_app.post('/product_combo/create', response_model=ProductComboSchema, tags=['ProductCombo'])
 async def create_product_combo(combo: ProductComboSchema, db: Session = Depends(get_db)):
     db_combo = ProductCombo(**combo.dict())
     db.add(db_combo)
@@ -308,7 +308,7 @@ async def create_product_combo(combo: ProductComboSchema, db: Session = Depends(
     return db_combo
 
 
-@glovo_app.get('/product_combo', response_model=ProductSchema, tags=['ProductCombo'])
+@glovo_app.get('/product_combo', response_model=ProductComboSchema, tags=['ProductCombo'])
 async def list_combo(db: Session = Depends(get_db)):
     return db.query(ProductCombo).all()
 
@@ -391,50 +391,52 @@ async def delete_cart(cart_id: int, db: Session = Depends(get_db)):
     return {'message': 'This Cart is deleted'}
 
 
-@glovo_app.post('/order/create', response_model=OrderSchema, tags=['Order'])
-async def create_product(order: OrderSchema, db: Session = Depends(get_db)):
-    db_order = Order(**order.dict())
-    db.add(db_order)
+
+@glovo_app.post('store_review/create', response_model=StoreReviewSchema, tags=['StoreReview'])
+async def create_review(review: StoreReviewSchema, db: Session = Depends(get_db)):
+    db_review = StoreReview(**review.dict())
+    db.add(db_review)
     db.commit()
-    db.refresh(db_order)
-    return db_order
+    db.refresh(db_review)
+    return db_review
 
 
-@glovo_app.get('/order/', response_model=OrderSchema, tags=['Order'])
-async def list_order(db: Session = Depends(get_db)):
-    return db.query(Order).all()
+@glovo_app.get('/store_review/', response_model=StoreReviewSchema, tags=['StoreReview'])
+async def list_review(db: Session = Depends(get_db)):
+    return db.query(StoreReview).all()
 
 
-@glovo_app.get('/order/{order_id}/',response_model=OrderSchema, tags=['Order'])
-async def detail_order(order_id: int, db: Session = Depends(get_db)):
-    order = db.query(Order).filter(Order.id == order_id).first()
-    if order is None:
-        raise HTTPException(status_code=404, detail='Order Not Found')
-    return order
+@glovo_app.get('/store_review/{store_review_id}', response_model=StoreReviewSchema, tags=['StoreReview'])
+async def detail_review(review_id: int, db: Session = Depends(get_db)):
+    review = db.query(StoreReview).filter(StoreReview.id == review_id).first()
+    if review is None:
+        raise HTTPException(status_code=404, detail='StoreReview Not Found')
+    return review
 
 
-@glovo_app.put('/order/update', response_model=OrderSchema, tags=['Order'])
-async def update_order(order_id: int, order_data: OrderSchema, db: Session = Depends(get_db)):
-    order = db.query(Order).filter(Order.id == order_id).first()
-    if order is None:
-        raise HTTPException(status_code=404, detail='Order Not Found')
-    return order
+@glovo_app.put('/store_review/update', response_model=StoreReviewSchema, tags=['StoreReview'])
+async def update_review(review_id: int, review_data: StoreReviewSchema, db: Session = Depends(get_db)):
+    review = db.query(StoreReview).filter(StoreReview.id == review_id).first()
+    if review is None:
+        raise HTTPException(status_code=404, detail='StoreReview Not Found')
+    return review
 
-    for order_key, order_value in order_data.dict().items():
-        setattr(order, order_key, order_value)
+    for review_key, review_value in review_data.dict().items():
+        setattr(review, review_key, review_value)
         db.commit()
-        db.refresh(order)
-        return order
+        db.refresh(review)
+        return review
 
 
-@glovo_app.delete('/order/delete', tags=['Order'])
-async def delete_order(order_id: int, db: Session = Depends(get_db)):
-    order = db.query(Order).filter(Order.id == order_id).first()
-    if order is None:
-        raise HTTPException(status_code=404, detail='Order Not Found')
-    db.delete(order)
+@glovo_app.delete('/store_review/delete', tags=['StoreReview'])
+async def delete_review(review_id: int, db: Session = Depends(get_db)):
+    review = db.query(StoreReview).filter(StoreReview.id == review_id).first()
+    if review is None:
+        raise HTTPException(status_code=404, detail='StoreReview Not Found')
+    db.delete(review)
     db.commit()
-    return {'message': 'This Order is deleted'}
+    return {'message': 'This StoreReview is deleted'}
+
 
 
 @glovo_app.post('courier/create', response_model=CourierSchema, tags=['Courier'])
@@ -482,4 +484,95 @@ async def delete_courier(courier_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {'message': 'This Courier is deleted'}
 
+
+@glovo_app.post('courier_review/create', response_model=CourierReviewSchema, tags=['CourierReview'])
+async def create_courier_review(courier_review: CourierReviewSchema, db: Session = Depends(get_db)):
+    db_courier_review = CourierReview(**courier_review.dict())
+    db.add(db_courier_review)
+    db.commit()
+    db.refresh(db_courier_review)
+    return db_courier_review
+
+
+@glovo_app.get('/courier_review/', response_model=CourierReviewSchema, tags=['CourierReview'])
+async def list_courier_review(db: Session = Depends(get_db)):
+    return db.query(CourierReview).all()
+
+
+@glovo_app.get('/courier_review/{courier_review_id}', response_model=CourierReviewSchema, tags=['CourierReview'])
+async def detail_review(courier_review_id: int, db: Session = Depends(get_db)):
+    courier_review = db.query(CourierReview).filter(CourierReview.id == courier_review_id).first()
+    if courier_review is None:
+        raise HTTPException(status_code=404, detail='CourierReview Not Found')
+    return courier_review
+
+
+@glovo_app.put('/courier_review/update', response_model=CourierReviewSchema, tags=['CourierReview'])
+async def update_review(courier_review_id: int, courier_review_data: CourierReviewSchema, db: Session = Depends(get_db)):
+    courier_review = db.query(CourierReview).filter(CourierReview.id == courier_review_id).first()
+    if courier_review is None:
+        raise HTTPException(status_code=404, detail='CourierReview Not Found')
+    return courier_review
+
+    for courier_review_key, courier_review_value in courier_review_data.dict().items():
+        setattr(courier_review, courier_review_key, courier_review_value)
+        db.commit()
+        db.refresh(courier_review)
+        return courier_review
+
+
+@glovo_app.delete('/courier_review/delete', tags=['CourierReview'])
+async def delete_courier_review(courier_review_id: int, db: Session = Depends(get_db)):
+    courier_review = db.query(CourierReview).filter(CourierReview.id == courier_review_id).first()
+    if courier_review is None:
+        raise HTTPException(status_code=404, detail='CourierReview Not Found')
+    db.delete(courier_review)
+    db.commit()
+    return {'message': 'This CourierReview is deleted'}
+
+
+@glovo_app.post('/order/create', response_model=OrderSchema, tags=['Order'])
+async def create_product(order: OrderSchema, db: Session = Depends(get_db)):
+    db_order = Order(**order.dict())
+    db.add(db_order)
+    db.commit()
+    db.refresh(db_order)
+    return db_order
+
+
+@glovo_app.get('/order/', response_model=OrderSchema, tags=['Order'])
+async def list_order(db: Session = Depends(get_db)):
+    return db.query(Order).all()
+
+
+@glovo_app.get('/order/{order_id}/',response_model=OrderSchema, tags=['Order'])
+async def detail_order(order_id: int, db: Session = Depends(get_db)):
+    order = db.query(Order).filter(Order.id == order_id).first()
+    if order is None:
+        raise HTTPException(status_code=404, detail='Order Not Found')
+    return order
+
+
+@glovo_app.put('/order/update', response_model=OrderSchema, tags=['Order'])
+async def update_order(order_id: int, order_data: OrderSchema, db: Session = Depends(get_db)):
+    order = db.query(Order).filter(Order.id == order_id).first()
+    if order is None:
+        raise HTTPException(status_code=404, detail='Order Not Found')
+    return order
+
+    for order_key, order_value in order_data.dict().items():
+        setattr(order, order_key, order_value)
+        db.commit()
+        db.refresh(order)
+        return order
+
+
+@glovo_app.delete('/order/delete', tags=['Order'])
+async def delete_order(order_id: int, db: Session = Depends(get_db)):
+    order = db.query(Order).filter(Order.id == order_id).first()
+    if order is None:
+        raise HTTPException(status_code=404, detail='Order Not Found')
+    db.delete(order)
+    db.commit()
+    return {'message': 'This Order is deleted'}
 

@@ -62,8 +62,9 @@ class ProductComboSchema(BaseModel):
     id: int
     combo_name: str
     combo_image: str
-    price: int
+    price: float
     description: str
+    store_id: int
 
     class Config:
         from_attribute = True
@@ -71,6 +72,7 @@ class ProductComboSchema(BaseModel):
 
 class CartSchema(BaseModel):
     id: int
+    user_id: int
 
     class Config:
         from_attribute = True
@@ -78,11 +80,15 @@ class CartSchema(BaseModel):
 
 class CartItemSchema(BaseModel):
     id: int
+    cart_id: int
+    product: int
     quantity: int
 
 
 class StoreReviewSchema(BaseModel):
     id: int
+    client: str
+    store: int
     rating: int
     comment: str
     created_date: int
@@ -93,6 +99,8 @@ class StoreReviewSchema(BaseModel):
 
 class CourierReviewSchema(BaseModel):
     id: int
+    client: int
+    courier: int
     rating: int
     created_date: int
 
