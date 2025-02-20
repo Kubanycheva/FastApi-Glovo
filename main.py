@@ -605,11 +605,11 @@ async def list_item(db: Session = Depends(get_db)):
 async def detail_item(item_id: int, db: Session = Depends(get_db)):
     item = db.query(CartItem).filter(CartItem.id == item_id).first()
     if item is None:
-        raise HTTPException(status_code=404, detail='Order Not Found')
-    return order
+        raise HTTPException(status_code=404, detail='CartItem Not Found')
+    return item
 
 
-@glovo_app.put('/order/update', response_model=OrderSchema, tags=['Order'])
+@glovo_app.put('/item/update', response_model=CartItemSchema, tags=['CartItem'])
 async def update_order(order_id: int, order_data: OrderSchema, db: Session = Depends(get_db)):
     order = db.query(Order).filter(Order.id == order_id).first()
     if order is None:
