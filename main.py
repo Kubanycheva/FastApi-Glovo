@@ -614,10 +614,10 @@ async def update_order(order_id: int, order_data: OrderSchema, db: Session = Dep
     item = db.query(CartItem).filter(CartItem.id == item_id).first()
     if item is None:
         raise HTTPException(status_code=404, detail='CartItem Not Found')
-    return order
+    return item
 
-    for order_key, order_value in order_data.dict().items():
-        setattr(order, order_key, order_value)
+    for item_key, item_value in item_data.dict().items():
+        setattr(item, order_key, order_value)
         db.commit()
         db.refresh(order)
         return order
