@@ -3,6 +3,10 @@ from glovo_app.db.models import (UserProfile, Category, Cart, CartItem, Courier,
                                  ContactInfo, Product, ProductCombo, Store, StoreReview)
 
 
+class UserProfileAdmin(ModelView, model=UserProfile):
+    column_list = [UserProfile.id, UserProfile.username]
+
+
 class CategoryAdmin(ModelView, model=Category):
     column_list = [Category.id, Category.category_name]
 

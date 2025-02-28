@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, status, APIRouter
 from glovo_app.db.database import SessionLocal
@@ -24,7 +26,7 @@ async def create_item(item: CartItemSchema, db: Session = Depends(get_db)):
     return db_item
 
 
-@cart_item.get('/', response_model=CartItemSchema)
+@cart_item.get('/', response_model=List[CartItemSchema])
 async def list_item(db: Session = Depends(get_db)):
     return db.query(CartItem).all()
 

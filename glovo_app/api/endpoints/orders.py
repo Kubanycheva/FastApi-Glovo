@@ -26,12 +26,12 @@ async def create_product(order: OrderSchema, db: Session = Depends(get_db)):
     return db_order
 
 
-@order_router.get('/', response_model=OrderSchema)
+@order_router.get('/', response_model=List[OrderSchema])
 async def list_order(db: Session = Depends(get_db)):
     return db.query(Order).all()
 
 
-@order_router.get('/{order_id}/',response_model=Order`Schema)
+@order_router.get('/{order_id}/', response_model=OrderSchema)
 async def detail_order(order_id: int, db: Session = Depends(get_db)):
     order = db.query(Order).filter(Order.id == order_id).first()
     if order is None:

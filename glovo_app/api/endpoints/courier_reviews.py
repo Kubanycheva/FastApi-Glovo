@@ -26,7 +26,7 @@ async def create_courier_review(courier_review: CourierReviewSchema, db: Session
     return db_courier_review
 
 
-@courier_review_router.get('/', response_model=CourierReviewSchema)
+@courier_review_router.get('/', response_model=List[CourierReviewSchema])
 async def list_courier_review(db: Session = Depends(get_db)):
     return db.query(CourierReview).all()
 

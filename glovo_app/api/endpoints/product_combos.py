@@ -26,7 +26,7 @@ async def create_product_combo(combo: ProductComboSchema, db: Session = Depends(
     return db_combo
 
 
-@product_combo_router.get('/', response_model=ProductComboSchema)
+@product_combo_router.get('/', response_model=List[ProductComboSchema])
 async def list_combo(db: Session = Depends(get_db)):
     return db.query(ProductCombo).all()
 

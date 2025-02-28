@@ -26,7 +26,7 @@ async def create_courier(courier: CourierSchema, db: Session = Depends(get_db)):
     return db_courier
 
 
-@courier_router.get('/', response_model=CourierSchema)
+@courier_router.get('/', response_model=List[CourierSchema])
 async def list_courier(db: Session = Depends(get_db)):
     return db.query(Courier).all()
 

@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional, List
 from datetime import datetime
-from models import TypeChoices, StatusChoices, RoleChoices
+from glovo_app.db.models import TypeChoices, StatusChoices, RoleChoices
 
 
 class UserProfileSchema(BaseModel):

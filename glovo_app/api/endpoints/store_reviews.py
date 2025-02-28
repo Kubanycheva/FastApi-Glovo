@@ -26,7 +26,7 @@ async def create_review(review: StoreReviewSchema, db: Session = Depends(get_db)
     return db_review
 
 
-@store_review_router.get('/', response_model=StoreReviewSchema)
+@store_review_router.get('/', response_model=List[StoreReviewSchema])
 async def list_review(db: Session = Depends(get_db)):
     return db.query(StoreReview).all()
 
