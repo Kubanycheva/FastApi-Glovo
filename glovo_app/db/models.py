@@ -1,8 +1,8 @@
-from sqlalchemy import String, Enum, DECIMAL, Integer, Boolean, DateTime, Text, ForeignKey
+from sqlalchemy import String, Enum, DECIMAL, Integer, DateTime, Text, ForeignKey
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from datetime import datetime
 from typing import Optional, List
-from database import Base
+from glovo_app.db.database import Base
 from enum import Enum as PyEnum
 from passlib.hash import bcrypt
 
