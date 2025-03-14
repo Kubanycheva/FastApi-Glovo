@@ -36,6 +36,8 @@ class UserProfile(Base):
     phone_number: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     role: Mapped[RoleChoices] = mapped_column(Enum(RoleChoices), nullable=False, default=RoleChoices.client)
     tokens: Mapped[List['RefreshToken']] = relationship('RefreshToken', back_populates='user')
+    cart_user: Mapped['UserProfile'] = relationship('Cart', back_populates='users', cascade='all, delete-orphan',
+                                                    uselist=False)
 
     def set_passwords(self, password: str):
         self.hashed_password = bcrypt.hash(password)
@@ -111,7 +113,8 @@ class Cart(Base):
     __tablename__ = 'cart'
     
     id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey('userprofile.id'))
+    user_id: Mapped[int] = mapped_column(ForeignKey('userprofile.id'), unique=True)
+    users: Mapped['UserProfile'] = relationship('UserProfile', back_populates='cart_user')
 
 
 class CartItem(Base):
