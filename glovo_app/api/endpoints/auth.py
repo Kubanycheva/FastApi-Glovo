@@ -10,7 +10,7 @@ from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from datetime import timedelta, datetime
 
-from glovo_app.db.models import UserProfile, RefreshToken
+from glovo_app.db.models import UserProfile, RefreshToken, Cart
 from glovo_app.db.schema import UserProfileSchema
 
 auth_router = APIRouter(prefix='/auth', tags=['Auth'])
@@ -46,7 +46,7 @@ def get_password_hash(password):
     return password_context.hash(password)
 
 
-@auth_router.post('/register', tags=['Регистрация'])
+@auth_router.post('/register')
 async def register(user: UserProfileSchema, db: Session = Depends(get_db)):
     user_db = db.query(UserProfile).filter(UserProfile.username == user.username).first()
     if user_db:
@@ -63,10 +63,15 @@ async def register(user: UserProfileSchema, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+
+    new_cart = Cart(user_id=new_user.id)
+    db.add(new_cart)
+    db.commit()
+
     return {'message': 'Saved'}
 
 
-@auth_router.post('/login', dependencies=[Depends(RateLimiter(times=3, seconds=20))], tags=['Регистрация'])
+@auth_router.post('/login', dependencies=[Depends(RateLimiter(times=3, seconds=20))])
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(UserProfile).filter(UserProfile.username == form_data.username).first()
     if not user or not verify_password(form_data.password, user.hashed_password):
@@ -80,7 +85,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     return {'access_token': access_token, 'refresh_token': refresh_token, 'token_type': 'bearer'}
 
 
-@auth_router.post('/logout', tags=['Регистрация'])
+@auth_router.post('/logout')
 async def logout(refresh_token: str, db: Session = Depends(get_db)):
     stored_token = db.query(RefreshToken).filter(RefreshToken.token == refresh_token).first()
 
@@ -92,7 +97,7 @@ async def logout(refresh_token: str, db: Session = Depends(get_db)):
     return {'message': 'Вышли'}
 
 
-@auth_router.post('/refresh', tags=['Регистрация'])
+@auth_router.post('/refresh')
 def refresh(refresh_token: str, db: Session = Depends(get_db)):
     token_entry = db.query(RefreshToken).filter(RefreshToken.token == refresh_token).first()
     if not token_entry:

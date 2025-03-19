@@ -16,7 +16,7 @@ async def get_db():
 product_router = APIRouter(prefix='/product', tags=['Product'])
 
 
-@product_router.post('//create/', response_model=ProductSchema)
+@product_router.post('/create/', response_model=ProductSchema)
 async def create_product(product: ProductSchema, db: Session = Depends(get_db)):
     db_product = Product(**product.dict())
     db.add(db_product)

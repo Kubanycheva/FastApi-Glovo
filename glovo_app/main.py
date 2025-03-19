@@ -1,5 +1,5 @@
 import fastapi
-from api.endpoints import (auth, categories, orders, carts, cart_items, contact_infos, couriers, courier_reviews,
+from api.endpoints import (auth, categories, orders, carts, contact_infos, couriers, courier_reviews,
                            store_reviews, stores, users, products, product_combos, users)
 
 import redis.asyncio as redis
@@ -31,7 +31,6 @@ setup_admin(glovo_app)
 glovo_app.include_router(auth.auth_router, tags=['Auth'])
 glovo_app.include_router(users.user_router, tags=['UserProfile'])
 glovo_app.include_router(categories.category_router, tags=['Category'])
-glovo_app.include_router(cart_items.cart_item, tags=['CartItem'])
 glovo_app.include_router(carts.cart_router, tags=['Cart'])
 glovo_app.include_router(orders.order_router, tags=['Order'])
 glovo_app.include_router(products.product_router, tags=['Product'])

@@ -36,6 +36,7 @@ class UserProfile(Base):
     phone_number: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     role: Mapped[RoleChoices] = mapped_column(Enum(RoleChoices), nullable=False, default=RoleChoices.client)
     tokens: Mapped[List['RefreshToken']] = relationship('RefreshToken', back_populates='user')
+
     cart_user: Mapped['UserProfile'] = relationship('Cart', back_populates='users', cascade='all, delete-orphan',
                                                     uselist=False)
 
@@ -112,9 +113,12 @@ class ProductCombo(Base):
 class Cart(Base):
     __tablename__ = 'cart'
     
-    id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True, index=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('userprofile.id'), unique=True)
     users: Mapped['UserProfile'] = relationship('UserProfile', back_populates='cart_user')
+
+    items: Mapped[List['CartItem']] = relationship('CartItem', back_populates='cart',
+                                                   cascade='all, delete-orphan')
 
 
 class CartItem(Base):
@@ -122,8 +126,10 @@ class CartItem(Base):
 
     id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True)
     cart_id: Mapped[int] = mapped_column(ForeignKey('cart.id'))
-    product: Mapped[int] = mapped_column(ForeignKey('product.id'))
-    quantity: Mapped[DECIMAL] = mapped_column(DECIMAL(2))
+    cart: Mapped['Cart'] = relationship('Cart', back_populates='items')
+    product_id: Mapped[int] = mapped_column(ForeignKey('product.id'))
+    product: Mapped['Product'] = relationship('Product')
+    quantity: Mapped[int] = mapped_column(Integer, default=1)
 
 
 class StoreReview(Base):

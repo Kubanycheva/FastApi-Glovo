@@ -53,6 +53,7 @@ class ProductSchema(BaseModel):
     product_image: str
     price: int
     description: str
+    store_id: int
 
     class Config:
         from_attributes = True
@@ -68,21 +69,6 @@ class ProductComboSchema(BaseModel):
 
     class Config:
         from_attribute = True
-
-
-class CartSchema(BaseModel):
-    id: int
-    user_id: int
-
-    class Config:
-        from_attribute = True
-
-
-class CartItemSchema(BaseModel):
-    id: int
-    cart_id: int
-    product: int
-    quantity: int
 
 
 class StoreReviewSchema(BaseModel):
@@ -124,3 +110,26 @@ class CourierSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class CartItemSchema(BaseModel):
+    id: int
+    product_id: int
+    quantity: int
+
+    class Config:
+        from_attribute = True
+
+
+class CartSchema(BaseModel):
+    id: int
+    user_id: int
+    items: List[CartItemSchema] = []
+    total_price: float
+
+    class Config:
+        from_attribute = True
+
+
+class CartItemCreateSchema(BaseModel):
+    product_id: int
