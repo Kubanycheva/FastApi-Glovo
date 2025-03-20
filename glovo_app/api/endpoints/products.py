@@ -1,10 +1,14 @@
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy.orm import Session
-from fastapi import Depends, HTTPException, status, APIRouter
+from fastapi import Depends, HTTPException, status, APIRouter, Query
 from glovo_app.db.database import SessionLocal
 from glovo_app.db.schema import ProductSchema
 from glovo_app.db.models import Product
+
+from sqlalchemy import asc, desc
+from fastapi_pagination import Page, add_pagination, paginate
+
 
 async def get_db():
     db = SessionLocal()
@@ -16,6 +20,14 @@ async def get_db():
 product_router = APIRouter(prefix='/product', tags=['Product'])
 
 
+@product_router.get('/search/', response_model=List[ProductSchema])
+async def search_product(product_name: str, db: Session = Depends(get_db)):
+    product_db = db.query(Product).filter(Product.product_name.ilike(f'%{product_name}%')).all()
+    if product_db is None:
+        raise HTTPException(status_code=404, detail='Product Not Found')
+    return product_db
+
+
 @product_router.post('/create/', response_model=ProductSchema)
 async def create_product(product: ProductSchema, db: Session = Depends(get_db)):
     db_product = Product(**product.dict())
@@ -25,9 +37,32 @@ async def create_product(product: ProductSchema, db: Session = Depends(get_db)):
     return db_product
 
 
-@product_router.get('/', response_model=List[ProductSchema],)
-async def list_product(db: Session = Depends(get_db)):
-    return db.query(Product).all()
+@product_router.get('/', response_model=Page[ProductSchema],)
+async def list_product(min_price: Optional[float] = Query(None, alias='price[from]'),
+                       max_price: Optional[float] = Query(None, alias='price[to]'),
+                       order_by: Optional[str] = Query(None, regex='^(asc|desc)$'),
+
+                       db: Session = Depends(get_db)):
+
+    query = db.query(Product)
+
+    if min_price is not None:
+        query = query.filter(Product.price >= min_price)
+
+    if max_price is not None:
+        query = query.filter(Product.price <= max_price)
+
+    if order_by == 'asc':
+        query = query.order_by(asc(Product.price))
+    elif order_by == 'desc':
+        query = query.order_by(desc(Product.price))
+
+    products = query.all()
+
+    if products is None:
+        raise HTTPException(status_code=404, detail='Product Not Found')
+
+    return paginate(products)
 
 
 @product_router.get('/{product_id}/', response_model=ProductSchema)

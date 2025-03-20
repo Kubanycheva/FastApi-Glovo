@@ -1,4 +1,6 @@
 import fastapi
+from fastapi_pagination import add_pagination
+
 from api.endpoints import (auth, categories, orders, carts, contact_infos, couriers, courier_reviews,
                            store_reviews, stores, users, products, product_combos, users)
 
@@ -27,6 +29,8 @@ async def lifespan(app: FastAPI):
 
 glovo_app = fastapi.FastAPI(title='Glovo site', lifespan=lifespan)
 setup_admin(glovo_app)
+
+add_pagination(glovo_app)
 
 glovo_app.include_router(auth.auth_router, tags=['Auth'])
 glovo_app.include_router(users.user_router, tags=['UserProfile'])
